@@ -218,6 +218,7 @@ const DeleteProduct = ApiResponseHandeler(async (req, res, next) => {
 });
 const GetProduct = ApiResponseHandeler(async (req, res, next) => {
   try {
+    console.log("data");
     const {
       product_for_gender,
       product_category,
@@ -282,7 +283,6 @@ const FindParticularProducts = ApiResponseHandeler(async (req, res, next) => {
     res.status(error.statusCode).json({ message: error.message });
   }
 });
-
 
 export {
   CreateProduct,
