@@ -15,10 +15,8 @@ app.set("view engine", "ejs");
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://dnk-frontend.vercel.app/",
+    origin: "https://dnk-frontend.vercel.app",
     credentials: true,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-    preflightContinue: false,
     optionsSuccessStatus: 204, // some legacy browsers (IE11, various SmartTVs) choke on 204
   })
 );
