@@ -15,7 +15,10 @@ app.set("view engine", "ejs");
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "https://dnk-frontend.vercel.app/",
+      "https://dnkecommerce.netlify.app/",
+    ],
     credentials: true,
   })
 );
