@@ -15,7 +15,7 @@ app.set("view engine", "ejs");
 app.use(cookieParser());
 app.use(
   cors({
-    origin: "https://dnkecommerce.netlify.app",
+    origin: process.env.Dev_enviorment?"http://localhost:5173":"https://dnkecommerce.netlify.app",
     credentials: true,
     optionsSuccessStatus: 204, // some legacy browsers (IE11, various SmartTVs) choke on 204
   })
