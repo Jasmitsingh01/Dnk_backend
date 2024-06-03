@@ -3,8 +3,7 @@ import ApiResponse from "../../utils/ApiResponse.js";
 import ApiError from "../../utils/ApiError.js";
 import Product from "../../Models/product.model.js";
 import UplodFiles from "../../utils/Upload.js";
-import { ChildProcess, spawnSync, exec } from "child_process";
-import { Console } from "console";
+import  jwt from "jsonwebtoken";
 const CreateProduct = ApiResponseHandeler(async (req, res, next) => {
   // this Controller is responsible for creating products
   try {
@@ -218,14 +217,23 @@ const DeleteProduct = ApiResponseHandeler(async (req, res, next) => {
 });
 const GetProduct = ApiResponseHandeler(async (req, res, next) => {
   try {
-    console.log("data");
     const {
       product_for_gender,
       product_category,
       product_per_page = 4,
+      is_Admin 
     } = req.query; // get Query parameters
     let product;
     let Total_number_pages;
+    if (is_Admin) {
+    const user= jwt.verify(req?.cookies?._accessToken,process.env.Jwt_secret_AccessToken)
+      if(!user){
+        throw new ApiError("UnAuthorized Access",401)
+      }
+
+      product = await Product.find({product_createdby:user?._id});
+      Total_number_pages = Math.ceil(product.length / product_per_page); // if is_Admin is true then return all products
+    }
     if (product_for_gender == "undefined" && product_category == "undefined") {
       product = await Product.find({
         product_status: "public",
