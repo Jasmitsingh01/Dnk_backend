@@ -3,6 +3,7 @@ import {
   CreateOrder,
   DeleteOrder,
   GetOrders,
+  LastThirtyDay,
   UpdateOrder,
 } from "../controllers/Order/index.js";
 import { VerfiyToken } from "../middleware/verfiyToken.js";
@@ -12,4 +13,5 @@ OrderRouter.route("/")
   .post(VerfiyToken, CreateOrder)
   .get(VerfiyToken, GetOrders);
 OrderRouter.route("/:id").delete(DeleteOrder).post(UpdateOrder);
+
 export default OrderRouter;

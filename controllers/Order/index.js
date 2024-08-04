@@ -142,4 +142,22 @@ const UpdateOrder = ApiResponseHandeler(async (req, res, next) => {
   }
 });
 
-export { CreateOrder, DeleteOrder, GetOrders, UpdateOrder };
+const LastThirtyDay=ApiResponseHandeler(async (req, res,next) => {
+  try {
+    const { user_id } = req;
+    console.log(user_id);
+    const Orders = await Order.find({
+      OrderTo:user_id,
+    });
+    if (!Orders) {
+      throw new ApiError("Invalid Data", 400);
+    }
+    res.status(200).send(new ApiResponse(200, "Order Found ", Orders));
+  } catch (error) {
+    console.log(error);
+    res
+     .status(error.statusCode)
+     .send(new ApiError(error.message, error.statusCode));
+  }
+})
+export { CreateOrder, DeleteOrder, GetOrders, UpdateOrder ,LastThirtyDay};

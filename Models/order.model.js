@@ -12,6 +12,8 @@ const orderSchema = new Schema({
   orderTotal: { type: Number, required: true, default: 0 },
   OrderBy: { type: Types.ObjectId, ref: "User", required: true },
   OrderTo: { type: [Types.ObjectId], ref: "Admin", required: true },
+},{
+  timestamps: true,
 });
 const Order = mongoose.model("Order", orderSchema);
 

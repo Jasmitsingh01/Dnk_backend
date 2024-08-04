@@ -234,15 +234,10 @@ const GetProduct = ApiResponseHandeler(async (req, res, next) => {
       product = await Product.find({product_createdby:user?._id});
       Total_number_pages = Math.ceil(product.length / product_per_page); // if is_Admin is true then return all products
     }
-    if (product_for_gender == "undefined" && product_category == "undefined") {
-      product = await Product.find({
-        product_status: "public",
-      });
-      Total_number_pages = Math.ceil(product.length / product_per_page); //  if not  product gender and product Category then return all products
-    }
+    
     if (
-      product_for_gender !== "undefined" ||
-      product_category !== "undefined"
+      product_for_gender  ||
+      product_category 
     ) {
       product = await Product.find({
         // if  product gender and product Category then return aacordingly
@@ -257,6 +252,13 @@ const GetProduct = ApiResponseHandeler(async (req, res, next) => {
         ],
       });
       Total_number_pages = Math.ceil(product.length / product_per_page);
+    }
+    else{
+        product = await Product.find({
+          product_status: "public",
+        });
+        Total_number_pages = Math.ceil(product.length / product_per_page); //  if not  product gender and product Category then return all products
+      
     }
 
     if (!product || product?.length === 0) {
