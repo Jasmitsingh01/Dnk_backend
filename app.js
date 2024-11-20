@@ -4,7 +4,6 @@ import OrderRouter from "./routes/Order.routes.js";
 import ProductRouter from "./routes/Products.routes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import path from "path";
 import Payment from "./routes/PaymentVerfiycation.routes.js";
 const app = express();
 app.use(express.json());
