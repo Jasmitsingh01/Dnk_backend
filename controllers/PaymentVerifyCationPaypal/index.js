@@ -3,27 +3,28 @@ import { ApiResponseHandeler } from "../../utils/ApiResponseHandeler.js";
 import fetch from "node-fetch";
 import ApiResponse from "../../utils/ApiResponse.js";
 const base = "https://api-m.sandbox.paypal.com";
+import axios from "axios";
+import base64 from "base-64";
 const generateAccessToken = async () => {
   try {
-    const PAYPAL_CLIENT_ID = process.env.client_id_papyal;
-    const PAYPAL_CLIENT_SECRET = process.env.client_serect_papyal;
-    if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
-      throw new Error("MISSING_API_CREDENTIALS");
-    }
-    const auth = Buffer.from(
-      PAYPAL_CLIENT_ID + ":" + PAYPAL_CLIENT_SECRET
-    ).toString("base64");
-    const response = await fetch(`${base}/v1/oauth2/token`, {
-      method: "POST",
-      body: "grant_type=client_credentials",
-      headers: {
-        Authorization: `Basic ${auth}`,
-      },
-    });
+    const client_id = process.env.client_id_papyal
+        const client_secret = process.env.client_serect_papyal
 
-    const data = await response.json();
-    return data.access_token;
+       
+        const response = await axios.post('https://api-m.sandbox.paypal.com/v1/oauth2/token',
+          new URLSearchParams({
+              'grant_type': 'client_credentials'
+          }),
+          {
+              headers:
+              {
+                  'Content-Type': 'application/x-www-form-urlencoded',
+                  'Authorization': 'Basic ' + base64.encode(client_id + ":" + client_secret)
+              }
+          })
+      return Promise.resolve(response.data.access_token);
   } catch (error) {
+    // console.log(error)
     console.error("Failed to generate Access Token:", error);
   }
 };
@@ -56,6 +57,7 @@ const paymentCreate = ApiResponseHandeler(async (req, res, next) => {
       method: "POST",
       body: JSON.stringify(payload),
     });
+    // console.log(accessToken)
     if (!response.ok) {
       throw new ApiError("Invalid payment request ", 500);
     }
@@ -64,7 +66,7 @@ const paymentCreate = ApiResponseHandeler(async (req, res, next) => {
       .status(201)
       .send(new ApiResponse(201, "order created successfully", Data));
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res
       .status(error.statusCode)
       .send(new ApiResponse(error.statusCode, error.message));
@@ -93,7 +95,7 @@ const paymentVeriy = ApiResponseHandeler(async (req, res, next) => {
     const Data = await response.json();
     res.status(200).send(new ApiResponse(200, "success ", Data));
   } catch (error) {
-    console.log(error);
+    // console.log(error);
     res
       .status(error.statusCode)
       .send(new ApiResponse(error.statusCode, error.message));

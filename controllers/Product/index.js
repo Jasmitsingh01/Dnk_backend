@@ -89,6 +89,7 @@ const UpdateProduct = ApiResponseHandeler(async (req, res, next) => {
       product_image,
       product_rating,
     } = req.body;
+    console.log(req.body)
     const { files } = req;
     const { id } = req.params; // Get all The Filed that have been upladed
     if (
@@ -186,29 +187,18 @@ const UpdateProduct = ApiResponseHandeler(async (req, res, next) => {
 const DeleteProduct = ApiResponseHandeler(async (req, res, next) => {
   try {
     const { id } = req.params; // Get the product ID from the request params and Find the product from the database
-    const { slug } = req.query;
+   
 
-    if (slug) {
+  
       //if slug is true then remove the product from the database
       const product = await Product.deleteOne({ _id: id });
       if (!product) {
         throw new ApiError("Product Not Found", 404);
       }
-      res
-        .status(202)
-        .send(new ApiResponse(202, "product deleted successfully"));
-    }
-    const product = await Product.findById(id);
-    if (!product) {
-      throw new ApiError("Product Not Found", 404); // if the product is not found throw an error
-    }
-    product.product_status = "hidden"; // if the slug not then then the product is hidden
 
-    const saveProduct = await product.save();
-    if (!saveProduct) {
-      throw new ApiError("Product Error while saving to Database", 500);
-    }
-    res.status(200).json(new ApiResponse(200, "Product Archived Sucessfully")); // Product was successfully saved
+  
+ 
+    res.status(200).json(new ApiResponse(200, "Product Deleted Sucessfully")); // Product was successfully saved
   } catch (error) {
     // Handle error the Error here and throw an error message
     console.log(error);
@@ -293,11 +283,24 @@ const FindParticularProducts = ApiResponseHandeler(async (req, res, next) => {
     res.status(error.statusCode).json({ message: error.message });
   }
 });
-
+const AdminGetAllProducts = ApiResponseHandeler(async(req,res,next)=>{
+ try{
+  const {user_id} = req
+  const product = await Product.find({product_createdby:user_id})
+  if(!product){
+    throw new ApiError("Product Not Found",404)
+  }
+  res.status(200).json(new ApiResponse(200,"Product Found Successfully",product))
+ }catch(error){
+  console.log(error)
+  res.status(error.statusCode).json({message:error.message})
+ }
+})
 export {
   CreateProduct,
   UpdateProduct,
   DeleteProduct,
   GetProduct,
   FindParticularProducts,
+  AdminGetAllProducts
 }; // Export all Controllers

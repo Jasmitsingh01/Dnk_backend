@@ -5,6 +5,7 @@ import {
   FindParticularProducts,
   GetProduct,
   UpdateProduct,
+  AdminGetAllProducts
 } from "../controllers/Product/index.js";
 import upload, { multiUpload } from "../middleware/multer.js";
 import { VerfiyToken } from "../middleware/verfiyToken.js";
@@ -16,5 +17,7 @@ ProductRouter.route("/all").get(GetProduct);
 ProductRouter.route("/single/:id")
   .get(FindParticularProducts)
   .delete(DeleteProduct)
-  .put(UpdateProduct);
+ 
+  ProductRouter.put("/single/:id",VerfiyToken,multiUpload,UpdateProduct);
+  ProductRouter.route("/admin/all").get(VerfiyToken,AdminGetAllProducts);
 export default ProductRouter;

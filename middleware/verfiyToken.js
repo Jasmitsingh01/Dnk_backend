@@ -9,12 +9,14 @@ const VerfiyToken = ApiResponseHandeler(async (req, res, next) => {
   try {
     const token =
       req?.cookies?._accessToken || req.headers.Authencation?.split(" ")[1];
+    
     const { isAdmin } = req.query;
     if (!token) {
       throw new ApiError("Authentication token is required", 401);
     }
     const verfiy = jwt.verify(token, process.env.Jwt_secret_AccessToken);
     let user;
+
     if (isAdmin) {
       user = await Admin.findOne({ _id: verfiy?._id });
     } else {

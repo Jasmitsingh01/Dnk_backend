@@ -53,7 +53,6 @@ const userLogin = ApiResponseHandeler(async (req, res, next) => {
       if (!finduser) {
         throw new ApiError("User not found", 404); // if user is not found return an error
       }
-    console.log(password,finduser.password)
       const isMatch = finduser.isPassword(password); // check the user password correct or not
       if (!isMatch) {
         throw new ApiError("Invalid password", 401); // if user password is incorrect return an error
@@ -220,7 +219,6 @@ const userUpdate = ApiResponseHandeler(async (req, res, next) => {
   try {
     const { name, email, avatar, address, gender, isAdmin } = req.body; // Get All Fileds Of user from user
     const { user_id } = req; // Get User id of user
-    console.log(req.body);
     if (!email && !isAdmin && !gender && !name && !address) {
       throw new ApiError("Nothing will Updated", 400);
     }
