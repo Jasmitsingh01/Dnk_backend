@@ -217,11 +217,43 @@ const userLogout = ApiResponseHandeler((req, res, next) => {
 // use update Profile
 const userUpdate = ApiResponseHandeler(async (req, res, next) => {
   try {
-    const { name, email, avatar, address, gender, isAdmin } = req.body; // Get All Fileds Of user from user
+    const { name, email, avatar, address, gender } = req.body; // Get All Fileds Of user from user
     const { user_id } = req; // Get User id of user
-    if (!email && !isAdmin && !gender && !name && !address) {
+    const { isAdmin } = req.query;
+    if (!email  && !gender && !name && !address) {
       throw new ApiError("Nothing will Updated", 400);
     }
+    if(isAdmin){
+      const finduser = await Admin.findById(user_id); // Find user by id
+      if (!finduser) {
+        throw new ApiError("User not found", 404); // if user is not found
+      }
+      // Any of the filed is Present then those Finds are updated
+      if (name !== null && name !== undefined && name !== "") {
+        finduser.name = name;
+      }
+      if (email !== null && email !== undefined && email !== "") {
+        finduser.email = email;
+      }
+  
+      if (address !== null && address !== undefined && address !== "") {
+        finduser.address = address;
+      }
+      if (gender !== null && gender !== undefined && gender !== "") {
+        finduser.gender = gender;
+      }
+      if (isAdmin !== null && isAdmin !== undefined && isAdmin !== false) {
+        finduser.isAdmin = isAdmin;
+      }
+      const Data = await finduser.save({ validateBeforeSave: false }); // save user into database
+      if (!Data) {
+        throw new ApiError("something went wrong", 500);
+      }
+      res
+        .status(200)
+        .send(new ApiResponse(200, "Update user Successfully", Data)); // Send successfull response bac
+    }
+   else{
     const finduser = await User.findById(user_id); // Find user by id
     if (!finduser) {
       throw new ApiError("User not found", 404); // if user is not found
@@ -249,7 +281,8 @@ const userUpdate = ApiResponseHandeler(async (req, res, next) => {
     }
     res
       .status(200)
-      .send(new ApiResponse(200, "Update user Successfully", Data)); // Send successfull response back to user
+      .send(new ApiResponse(200, "Update user Successfully", Data)); 
+   }// Send successfull response back to user
   } catch (error) {
     console.log(error);
     res.status(error.statusCode).json({ message: error.message }); // Send error response back to user
@@ -259,7 +292,13 @@ const userUpdate = ApiResponseHandeler(async (req, res, next) => {
 const getUserDetails = ApiResponseHandeler(async (req, res, next) => {
   try {
     const { user_id } = req;
-    const finduser = await User.findById(user_id);
+    const { isAdmin } = req.query;
+    let finduser;
+    if (isAdmin) {
+       finduser = await Admin.findById(user_id);
+    } else {
+       finduser = await User.findById(user_id);
+    }
     if (!finduser) {
       throw new ApiError("User not found", 404);
     }
